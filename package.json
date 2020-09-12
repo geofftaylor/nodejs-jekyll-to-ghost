@@ -24,8 +24,8 @@
   "dependencies": {
     "cli-color": "^0.3.2",
     "js-yaml": "^3.2.2",
-    "markdown": "^0.5.0",
-    "node-uuid": "^1.4.1"
+    "markdown-it": "^11.0.0",
+    "uuid": "^8.3.0"
   },
   "devDependencies": {
     "chai": "^3.4.0",

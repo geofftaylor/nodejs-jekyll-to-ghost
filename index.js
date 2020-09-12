@@ -5,16 +5,17 @@
 let path = require('path');
 let fs = require('fs');
 let yaml = require('js-yaml');
-let uuid = require('node-uuid');
+let uuid = require('uuid');
 let clc = require('cli-color');
-let markdown = require( "markdown" ).markdown;
+let md = require('markdown-it')({
+  html: true
+});
 
 // default color messages
 let logError = clc.red.bold;
 let logWarn = clc.yellow;
 let logNotice = clc.blue;
 let logSuccess = clc.green;
-
 
 class JekyllToGhost {
 
@@ -57,6 +58,7 @@ class JekyllToGhost {
         let postContent;
         let postYAML; 
         let postMarkdown;
+        let generatedHtml;
         let data;
         let folder = this.folder;
         let re = /(\.md|\.markdown)$/i;
@@ -97,13 +99,13 @@ class JekyllToGhost {
                 postContent = data.toString();
                 postYAML = this.extractPostYAML(postContent);
                 postMarkdown = this.extractPostMarkdown(postContent);
+                generatedHtml = md.render(postMarkdown);
 
                 postObj['id'] = i;
                 postObj['uuid'] = uuid.v4();
                 postObj['title'] = postYAML.title;
                 postObj['slug'] = postName;
-                postObj['markdown'] = postMarkdown;
-                postObj['html'] = markdown.toHTML(postMarkdown);
+                postObj['html'] = generatedHtml;
                 postObj['image'] = null;
                 postObj['featured'] = 0;
                 postObj['page'] = 0;

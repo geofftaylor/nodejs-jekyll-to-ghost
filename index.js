@@ -27,6 +27,7 @@ class JekyllToGhost {
     constructor (pathPosts, userName, userEmail) {
         this.folder = pathPosts;
         this.ghostFileOutput = './ghost-generated.json';
+        this.tags = [];
         this.ghostObj = {
             data: {
                 posts: [],
@@ -36,7 +37,9 @@ class JekyllToGhost {
                         name: userName,
                         email: userEmail
                     }
-                ]
+                ],
+                tags: [],
+                posts_tags: []
             }
         };
 
@@ -148,10 +151,11 @@ class JekyllToGhost {
 
                 this.populatePosts(postObj);
 
+                this.populateTags(postYAML.tags, i);
+
                 if ( (this.ghostObj.data.posts.length + 1) === files.length ) {
                     this.writeToFile();
                 }
-
             }
         });
     }
@@ -230,6 +234,40 @@ class JekyllToGhost {
      */
     populatePosts (postObj) {
         this.ghostObj['data']['posts'].push(postObj);
+    }
+
+    /**
+     * Populate tags Array with tag. Populate posts_tags Array with post and tag.
+     * @param tags
+     * @param postId
+     * @method populateTags
+     */
+    populateTags (tags, postId) {
+        for (let tag of tags) {
+            // Replace dashes with spaces.
+            tag = tag.replace('-', ' ');
+
+            if (this.tags.indexOf(tag) === -1) {
+                // The tag needs to be added to `this.tags`
+                // and the output `tags` array.
+                this.tags.push(tag);
+    
+                let tagData = {
+                    id: this.tags.indexOf(tag),
+                    name: tag
+                }
+    
+                this.ghostObj['data']['tags'].push(tagData);
+            }
+
+            // Add the `postTag` object to the output `posts_tags` array.
+            let postTag = {
+                tag_id: this.tags.indexOf(tag),
+                post_id: postId
+            }
+
+            this.ghostObj['data']['posts_tags'].push(postTag);
+        }
     }
 
     /**

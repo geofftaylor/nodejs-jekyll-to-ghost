@@ -60,6 +60,7 @@ class JekyllToGhost {
         let postMarkdown;
         let cleanedMarkdown;
         let generatedHtml;
+        let mobiledoc;
         let data;
         let folder = this.folder;
         let re = /(\.md|\.markdown)$/i;
@@ -103,11 +104,19 @@ class JekyllToGhost {
                 cleanedMarkdown = this.removeLiquidTags(postMarkdown);
                 generatedHtml = md.render(cleanedMarkdown);
 
+                mobiledoc = JSON.stringify({
+                    version: '0.3.1',
+                    markups: [],
+                    atoms: [],
+                    cards: [['html', {cardName: 'html', html: generatedHtml}]],
+                    sections: [[10, 0]]
+                });
+
                 postObj['id'] = i;
                 postObj['uuid'] = uuid.v4();
                 postObj['title'] = postYAML.title;
                 postObj['slug'] = postName;
-                postObj['html'] = generatedHtml;
+                postObj['mobiledoc'] = mobiledoc;
                 postObj['image'] = null;
                 postObj['featured'] = 0;
                 postObj['page'] = 0;

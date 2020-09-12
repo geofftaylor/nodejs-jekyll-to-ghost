@@ -25,6 +25,7 @@ class JekyllToGhost {
      * @method constructor
      */
     constructor (pathPosts, userName, userEmail) {
+        this.errors = 0;
         this.folder = pathPosts;
         this.ghostFileOutput = './ghost-generated.json';
         this.tags = [];
@@ -126,7 +127,16 @@ class JekyllToGhost {
                 postTitle = postYAML.title;
 
                 if (postYAML.subtitle) {
-                  postTitle = postTitle + ", " + postYAML.subtitle;
+                    if (postTitle !== null) {
+                        postTitle = postTitle + ", " + postYAML.subtitle;
+                    } else {
+                        postTitle = postYAML.subtitle;
+                    }
+                }
+
+                if (postTitle === null) {
+                    console.log(logError(`Ghost requires a title. Post ${post} does not contain 'title' or 'subtitle' in YAML front matter.`));
+                    this.errors++;
                 }
 
                 postObj['id'] = i;
@@ -153,8 +163,8 @@ class JekyllToGhost {
 
                 this.populateTags(postYAML.tags, i);
 
-                if ( (this.ghostObj.data.posts.length + 1) === files.length ) {
-                    this.writeToFile();
+                if ( (this.ghostObj.data.posts.length + 1) === files.length) {
+                    this.finish();
                 }
             }
         });
@@ -287,6 +297,18 @@ class JekyllToGhost {
 
         fs.writeFileSync(this.ghostFileOutput, data, 'utf8');
         console.log( logSuccess('Ghost JSON generated successfully!') );
+    }
+
+    /**
+     * Finish handler
+     * @method finish
+     */
+    finish () {
+        if (this.errors === 0) {
+            this.writeToFile();
+        } else {
+            console.log(logError('JSON could not be generated due to errors.'));
+        }
     }
 
 }

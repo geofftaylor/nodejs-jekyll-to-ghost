@@ -212,7 +212,7 @@ class JekyllToGhost {
     populateMeta () {
         this.ghostObj['meta'] = {
             'exported_on': Date.now(),
-            'version': '000'
+            'version': '3.32.2'
         }
     }
 

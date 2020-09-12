@@ -24,12 +24,19 @@ class JekyllToGhost {
      * @param pathPosts [path where jekyll posts are stored]
      * @method constructor
      */
-    constructor (pathPosts) {
+    constructor (pathPosts, userName, userEmail) {
         this.folder = pathPosts;
         this.ghostFileOutput = './ghost-generated.json';
         this.ghostObj = {
             data: {
-                posts: []
+                posts: [],
+                users: [
+                    {
+                        id: 1,
+                        name: userName,
+                        email: userEmail
+                    }
+                ]
             }
         };
 
@@ -247,7 +254,7 @@ class JekyllToGhost {
 console.log( logSuccess('Running...') );
 
 if ( process.argv[2] ) {
-  let app = new JekyllToGhost(process.argv[2]);
+  let app = new JekyllToGhost(process.argv[2], process.argv[3], process.argv[4]);
 } else if ( process.argv.length === 1 ) {
     console.log( logWarn('You need to specify a path to Jekyll posts.') );
 }

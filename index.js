@@ -64,6 +64,7 @@ class JekyllToGhost {
         let postPath;
         let postContent;
         let postYAML; 
+        let postTitle;
         let postMarkdown;
         let cleanedMarkdown;
         let generatedHtml;
@@ -119,9 +120,15 @@ class JekyllToGhost {
                     sections: [[10, 0]]
                 });
 
+                postTitle = postYAML.title;
+
+                if (postYAML.subtitle) {
+                  postTitle = postTitle + ", " + postYAML.subtitle;
+                }
+
                 postObj['id'] = i;
                 postObj['uuid'] = uuid.v4();
-                postObj['title'] = postYAML.title;
+                postObj['title'] = postTitle;
                 postObj['slug'] = postName;
                 postObj['mobiledoc'] = mobiledoc;
                 postObj['image'] = null;
@@ -129,7 +136,7 @@ class JekyllToGhost {
                 postObj['page'] = 0;
                 postObj['status'] = 'published';
                 postObj['language'] = 'en_US';
-                postObj['meta_title'] = postYAML.title;
+                postObj['meta_title'] = postTitle;
                 postObj['meta_description'] = null;
                 postObj['author_id'] = 1;
                 postObj['created_at'] = Date.parse(postDate);

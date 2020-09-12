@@ -58,6 +58,7 @@ class JekyllToGhost {
         let postContent;
         let postYAML; 
         let postMarkdown;
+        let cleanedMarkdown;
         let generatedHtml;
         let data;
         let folder = this.folder;
@@ -99,7 +100,8 @@ class JekyllToGhost {
                 postContent = data.toString();
                 postYAML = this.extractPostYAML(postContent);
                 postMarkdown = this.extractPostMarkdown(postContent);
-                generatedHtml = md.render(postMarkdown);
+                cleanedMarkdown = this.removeLiquidTags(postMarkdown);
+                generatedHtml = md.render(cleanedMarkdown);
 
                 postObj['id'] = i;
                 postObj['uuid'] = uuid.v4();
@@ -169,6 +171,22 @@ class JekyllToGhost {
      */
     extractPostMarkdown (content) {
         return content.substring(content.lastIndexOf('---') + 3, content.length);
+    }
+
+    /**
+     * Remove Liquid {% %} and {{ }} tags from Markdown
+     * @param content [post content]
+     * @returns {string}
+     * @method removeLiquidTags
+     */
+    removeLiquidTags(content) {
+        const liquidTag = /{%\-?[\w\sÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖØÙÚÛÜÝÞßàáâãäåæçèéêëìíîïðñòóôõöøùúûüýþÿ=!<>.'",:()\-]+\-?%}/g;
+        const liquidOutput = /{{[\w\sÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖØÙÚÛÜÝÞßàáâãäåæçèéêëìíîïðñòóôõöøùúûüýþÿ.'",;:|%\[\]\-]+}}/g;
+
+        let output = content.replace(liquidTag, "");
+        output = output.replace(liquidOutput, "");
+
+        return output;
     }
 
     /**

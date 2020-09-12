@@ -124,7 +124,11 @@ class JekyllToGhost {
                     sections: [[10, 0]]
                 });
 
-                postTitle = postYAML.title;
+                if (!postYAML.title) {
+                    postTitle = null;
+                } else {
+                    postTitle = postYAML.title;
+                }
 
                 if (postYAML.subtitle) {
                     if (postTitle !== null) {
@@ -135,7 +139,7 @@ class JekyllToGhost {
                 }
 
                 if (postTitle === null) {
-                    console.log(logError(`Ghost requires a title. Post ${post} does not contain 'title' or 'subtitle' in YAML front matter.`));
+                    console.log(logError(`Ghost requires a title. Could not find 'title' or 'subtitle' in YAML front matter of post ${post}.`));
                     this.errors++;
                 }
 

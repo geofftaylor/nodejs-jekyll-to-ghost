@@ -22,6 +22,7 @@
   },
   "homepage": "https://github.com/weblancaster/nodejs-jekyll-to-ghost",
   "dependencies": {
+    "cheerio": "^1.0.0-rc.3",
     "cli-color": "^0.3.2",
     "js-yaml": "^3.2.2",
     "markdown-it": "^11.0.0",

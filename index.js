@@ -10,6 +10,7 @@ let clc = require('cli-color');
 let md = require('markdown-it')({
   html: true
 });
+let cheerio = require('cheerio');
 
 // default color messages
 let logError = clc.red.bold;
@@ -65,6 +66,7 @@ class JekyllToGhost {
         let postMarkdown;
         let cleanedMarkdown;
         let generatedHtml;
+        let newHtml;
         let mobiledoc;
         let data;
         let folder = this.folder;
@@ -108,15 +110,13 @@ class JekyllToGhost {
                 postMarkdown = this.extractPostMarkdown(postContent);
                 cleanedMarkdown = this.removeLiquidTags(postMarkdown);
                 generatedHtml = md.render(cleanedMarkdown);
-
-                // TODO: Clean up <img> tags in generated HTML.
-                // let newHtml = fixImgSrcTags(generatedHTML, postDate)
+                newHtml = this.fixImgTags(generatedHtml, postDate);
 
                 mobiledoc = JSON.stringify({
                     version: '0.3.1',
                     markups: [],
                     atoms: [],
-                    cards: [['html', {cardName: 'html', html: generatedHtml}]],
+                    cards: [['html', {cardName: 'html', html: newHtml}]],
                     sections: [[10, 0]]
                 });
 
@@ -233,9 +233,32 @@ class JekyllToGhost {
      * @returns {string}
      * @method fixImgSrcTags
      */
-    fixImgSrcTags(html, postDate) {
-        const re = /<\s?img (src\s?=\s?["'](.+\..+)["'])\s?>/g
-        const contentPath = '/content/' + postDate.substring(0, 4) + '/' + postDate.substring(5, 7) + '/';
+    fixImgTags(html, postDate) {
+        // Construct the content path from the post year and post month
+        let contentPath = '/content/images/' + postDate.substring(0, 4) + '/' + postDate.substring(5, 7) + '/';
+
+        // Parse the HTML with Cheerio
+        let $ = cheerio.load(html);
+
+        // For each <img> tag, get the `src` value and take the string from the last slash
+        // to the end as `imageFile`. If `src` contains no slashes, use the whole `src` value as `imageFile`.
+        // Then set `src` to `contentPath` + `imageFile`.
+        $('img').each(function(i, elem) {
+            let imageFile;
+            let src = $(this).attr('src');
+            let lastSlash = src.lastIndexOf('/');
+        
+            if (lastSlash !== -1) {
+                imageFile = src.substring(lastSlash + 1);
+            } else {
+                imageFile = src;
+            }
+        
+            let newSrc = contentPath + imageFile;
+            $(this).attr('src', newSrc);
+        });
+
+        return $('body').html();
     }
 
     /**

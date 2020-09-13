@@ -8,7 +8,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/weblancaster/nodejs-jekyll-to-ghost.git"
+    "url": "https://github.com/geofftaylor/nodejs-jekyll-to-ghost.git"
   },
   "keywords": [
     "jekyll",
@@ -18,7 +18,7 @@
   "author": "Michael Lancaster",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/weblancaster/nodejs-jekyll-to-ghost/issues"
+    "url": "https://github.com/geofftaylor/nodejs-jekyll-to-ghost/issues"
   },
   "homepage": "https://github.com/weblancaster/nodejs-jekyll-to-ghost",
   "dependencies": {

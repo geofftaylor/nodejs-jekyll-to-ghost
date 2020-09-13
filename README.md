@@ -1,7 +1,17 @@
 Node.js Jekyll to Ghost
 ======================
+An update to weblancaster's [nodejs-jekyll-to-ghost](https://github.com/weblancaster/nodejs-jekyll-to-ghost).
 
-[![Build Status](https://travis-ci.org/weblancaster/nodejs-jekyll-to-ghost.svg?branch=master)](https://travis-ci.org/weblancaster/nodejs-jekyll-to-ghost)
+### Updates
+1. The deprecated `node-uuid` module has been replaced with `uuid`.
+2. The `markdown` module has been replaced with `markdown-it`.
+3. HTML tags are allowed in the Markdown source.
+4. Liquid tags are removed from the Markdown source prior to converting it to HTML.
+5. The generated HTML is wrapped in an `html` card and converted to [modiledoc](https://ghost.org/docs/api/v3/migration/content/#mobiledoc).
+6. Jekyll tags are converted to Ghost tags.
+
+
+======================
 
 This NodeJS module will help you to export [Jekyll](http://jekyllrb.com) markdown posts to a format that can be easily imported to [Ghost Blog Platform](http://ghost.org). <br>
 It doesn't handle static pages, and it doesn't do anything with images. You'll have to copy those over yourself and manually adjust any URL differences.

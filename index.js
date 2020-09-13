@@ -109,6 +109,9 @@ class JekyllToGhost {
                 cleanedMarkdown = this.removeLiquidTags(postMarkdown);
                 generatedHtml = md.render(cleanedMarkdown);
 
+                // TODO: Clean up <img> tags in generated HTML.
+                // let newHtml = fixImgSrcTags(generatedHTML, postDate)
+
                 mobiledoc = JSON.stringify({
                     version: '0.3.1',
                     markups: [],
@@ -221,6 +224,18 @@ class JekyllToGhost {
         output = output.replace(liquidOutput, "");
 
         return output;
+    }
+
+    /**
+     * Replace the `src` value in <img> tags with '/content/<post year>/<post month>/<image file>'.
+     * @param html
+     * @param postDate
+     * @returns {string}
+     * @method fixImgSrcTags
+     */
+    fixImgSrcTags(html, postDate) {
+        const re = /<\s?img (src\s?=\s?["'](.+\..+)["'])\s?>/g
+        const contentPath = '/content/' + postDate.substring(0, 4) + '/' + postDate.substring(5, 7) + '/';
     }
 
     /**

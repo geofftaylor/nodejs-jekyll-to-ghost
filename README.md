@@ -9,6 +9,7 @@ An update to weblancaster's [nodejs-jekyll-to-ghost](https://github.com/weblanca
 4. Liquid tags are removed from the Markdown source prior to converting it to HTML.
 5. The generated HTML is wrapped in an `html` card and converted to [modiledoc](https://ghost.org/docs/api/v3/migration/content/#mobiledoc).
 6. Jekyll tags are converted to Ghost tags.
+7. The `src` attribute of each `<img>` tag is rewritten to `/content/images/<post year>/<post month>/<filename>`. A report is produced listing the directory that the images need to be stored in for each post.
 
 ---
 

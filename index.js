@@ -29,6 +29,7 @@ class JekyllToGhost {
         this.errors = 0;
         this.folder = pathPosts;
         this.ghostFileOutput = './ghost-generated.json';
+        this.imageReport = './image-report.txt';
         this.tags = [];
         this.ghostObj = {
             data: {
@@ -110,15 +111,6 @@ class JekyllToGhost {
                 postMarkdown = this.extractPostMarkdown(postContent);
                 cleanedMarkdown = this.removeLiquidTags(postMarkdown);
                 generatedHtml = md.render(cleanedMarkdown);
-                newHtml = this.fixImgTags(generatedHtml, postDate);
-
-                mobiledoc = JSON.stringify({
-                    version: '0.3.1',
-                    markups: [],
-                    atoms: [],
-                    cards: [['html', {cardName: 'html', html: newHtml}]],
-                    sections: [[10, 0]]
-                });
 
                 if (!postYAML.title) {
                     postTitle = null;
@@ -138,6 +130,16 @@ class JekyllToGhost {
                     console.log(logError(`Ghost requires a title. Could not find 'title' or 'subtitle' in YAML front matter of post ${post}.`));
                     this.errors++;
                 }
+
+                newHtml = this.fixImgTags(generatedHtml, postDate, postTitle);
+
+                mobiledoc = JSON.stringify({
+                    version: '0.3.1',
+                    markups: [],
+                    atoms: [],
+                    cards: [['html', {cardName: 'html', html: newHtml}]],
+                    sections: [[10, 0]]
+                });
 
                 postObj['id'] = i;
                 postObj['uuid'] = uuid.v4();
@@ -230,10 +232,11 @@ class JekyllToGhost {
      * Replace the `src` value in <img> tags with '/content/<post year>/<post month>/<image file>'.
      * @param html
      * @param postDate
+     * @param postTitle
      * @returns {string}
      * @method fixImgSrcTags
      */
-    fixImgTags(html, postDate) {
+    fixImgTags(html, postDate, postTitle) {
         // Construct the content path from the post year and post month
         let contentPath = '/content/images/' + postDate.substring(0, 4) + '/' + postDate.substring(5, 7) + '/';
 
@@ -243,6 +246,7 @@ class JekyllToGhost {
         // For each <img> tag, get the `src` value and take the string from the last slash
         // to the end as `imageFile`. If `src` contains no slashes, use the whole `src` value as `imageFile`.
         // Then set `src` to `contentPath` + `imageFile`.
+        let images = [];
         $('img').each(function(i, elem) {
             let imageFile;
             let src = $(this).attr('src');
@@ -253,10 +257,25 @@ class JekyllToGhost {
             } else {
                 imageFile = src;
             }
+
+            images.push(imageFile);
         
             let newSrc = contentPath + imageFile;
             $(this).attr('src', newSrc);
         });
+
+        if (images.length > 0) {
+            if (images.filter(item => item.length > 0).length === 0) {
+                // We found <img> tags but couldn't find file names in the `src` attribute.
+                fs.appendFileSync(this.imageReport, `WARNING: The post "${postTitle}" contains <img> tags, but the image file names could not be determined. Please fix the <img> tags and copy the images to ${contentPath}.\n`, 'utf8');
+            } else {
+                // We found the file names and updated the <img> tags.
+                fs.appendFileSync(this.imageReport, `<img> tags have been updated for "${postTitle}." Copy the following images to ${contentPath}:\n`, 'utf8');
+                fs.appendFileSync(this.imageReport, images.join('\n'), 'utf8');
+            }
+
+            fs.appendFileSync(this.imageReport, '\n=============================\n\n', 'utf8');
+        }
 
         return $('body').html();
     }

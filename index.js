@@ -271,6 +271,7 @@ class JekyllToGhost {
             } else {
                 // We found the file names and updated the <img> tags.
                 fs.appendFileSync(this.imageReport, `<img> tags have been updated for "${postTitle}." Copy the following images to ${contentPath}:\n`, 'utf8');
+                fs.appendFileSync(this.imageReport, `Target Directory: ${contentPath}\n`, 'utf8');
                 fs.appendFileSync(this.imageReport, images.join('\n'), 'utf8');
             }
 

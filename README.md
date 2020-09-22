@@ -9,7 +9,17 @@ An update to weblancaster's [nodejs-jekyll-to-ghost](https://github.com/weblanca
 4. Liquid tags are removed from the Markdown source prior to converting it to HTML.
 5. The generated HTML is wrapped in an `html` card and converted to [modiledoc](https://ghost.org/docs/api/v3/migration/content/#mobiledoc).
 6. Jekyll tags are converted to Ghost tags.
-7. The `src` attribute of each `<img>` tag is rewritten to `/content/images/<post year>/<post month>/<filename>`. A report is produced listing the directory that the images need to be stored in for each post.
+7. The `src` attribute of each `<img>` tag is rewritten to `/content/images/<post year>/<post month>/<filename>`. A report (image-report.txt) is produced listing the directory that the images need to be stored in for each post.
+8. Optionally, you can run `copy-images.py` to copy the images from your Jekyll `_site` directory to your Ghost website.
+
+
+#### `copy-images.py`:
+
+The script will read image-report.txt and attempt to copy the images from your Jekyll `_site` directory to your Ghost website. Requires Python 3.7. (It *should* work with version 3.3 or later, but I've only tested it with 3.7.)
+
+Usage: `copy-images.py <jekyll-site-directory> <ghost-directory>`
+
+The script expects to find image-report.txt in the same directory as the script. `<jekyll-site-directory>` is the path to your generated Jekyll site (usually `_site`), e.g., `~/my-jekyll-site/_site`. `<ghost-directory>` is the top-level directory of your Ghost site (the directory that contains the `content` subdirectory).
 
 ---
 

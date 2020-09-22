@@ -267,15 +267,16 @@ class JekyllToGhost {
         if (images.length > 0) {
             if (images.filter(item => item.length > 0).length === 0) {
                 // We found <img> tags but couldn't find file names in the `src` attribute.
-                fs.appendFileSync(this.imageReport, `WARNING: The post "${postTitle}" contains <img> tags, but the image file names could not be determined. Please fix the <img> tags and copy the images to ${contentPath}.\n`, 'utf8');
+                fs.appendFileSync(this.imageReport, `WARNING: The post "${postTitle}" contains <img> tags, but the image file names could not be determined. Please fix the <img> tags and copy the images to ${contentPath}.`, 'utf8');
             } else {
                 // We found the file names and updated the <img> tags.
                 fs.appendFileSync(this.imageReport, `<img> tags have been updated for "${postTitle}." Copy the following images to ${contentPath}:\n`, 'utf8');
+                fs.appendFileSync(this.imageReport, `Post Title: ${postTitle}\n`, 'utf8');
                 fs.appendFileSync(this.imageReport, `Target Directory: ${contentPath}\n`, 'utf8');
                 fs.appendFileSync(this.imageReport, images.join('\n'), 'utf8');
             }
 
-            fs.appendFileSync(this.imageReport, '\n=============================\n\n', 'utf8');
+            fs.appendFileSync(this.imageReport, '\n=============================\n', 'utf8');
         }
 
         return $('body').html();
